@@ -83,3 +83,23 @@ body.no-ui .name-form { display: none; }
 #start .start-title { font: 800 clamp(18px, 3.4vw, 52px)/1.1 "Inter", sans-serif; letter-spacing: -0.01em; }
 #start .start-sub { color: var(--muted); font-size: clamp(11px, 1.1vw, 16px); }
 #start .start-by { color: var(--orange); font-size: clamp(10px, 0.9vw, 13px); letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---------- phones: immersive full-screen player ---------- */
+#tap-ui { display: none; }
+body.immersive { overflow: hidden; }
+body.immersive #stage-wrap { position: fixed; inset: 0; z-index: 100; background: #000; display: block; }
+body.immersive #ref, body.immersive #controls, body.immersive .name-form, body.immersive .keys { display: none; }
+body.immersive #stage { position: absolute; left: 50%; top: 50%; border: 0; border-radius: 0; flex: none;
+  width: min(100vw, calc(100vh * 16 / 9)); width: min(100vw, calc(100dvh * 16 / 9)); max-width: none; height: auto; aspect-ratio: 16 / 9; transform: translate(-50%, -50%); }
+/* phone held upright: turn the picture sideways so it fills the screen */
+@media (orientation: portrait) {
+  body.immersive #stage { width: min(100vh, calc(100vw * 16 / 9)); width: min(100dvh, calc(100vw * 16 / 9)); transform: translate(-50%, -50%) rotate(90deg); }
+}
+body.immersive #tap-ui { display: block; position: absolute; inset: 0; pointer-events: none; transition: opacity .3s; }
+body.immersive.ui-hidden #tap-ui { opacity: 0; }
+#tap-ui button { pointer-events: auto; position: absolute; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(243,238,230,0.35);
+  background: rgba(10,9,8,0.65); color: #f2eee8; font: 600 16px "JetBrains Mono", monospace; display: grid; place-items: center; cursor: pointer; }
+#tap-exit { top: 12px; right: 12px; }
+#tap-play { bottom: 12px; left: 12px; }
+#tap-debug { bottom: 12px; right: 12px; color: var(--orange) !important; }
+body.immersive.ui-hidden #tap-ui button { pointer-events: none; }

@@ -71,6 +71,9 @@
       document.title = `${CONFIG.title} — frames 1–${this.frames}`;
 
       const q = new URLSearchParams(location.search);
+      this.touch = matchMedia('(pointer: coarse)').matches || q.get('touch') === '1';
+      if (this.touch) { document.body.classList.add('touch'); K.LOW = true; }
+      if (q.get('imm') === '1') document.body.classList.add('immersive');
       if (q.get('ui') === '0') document.body.classList.add('no-ui');
       if (q.get('fx') === '0') CONFIG.fx = { bloom: 0, grain: 0, vignette: 0 };
       if (q.get('debug') === '1') this.debug = true;
@@ -98,6 +101,10 @@
       })();
 
       this.bindUI();
+      if (this.touch) {
+        this.updateQualityLabel();
+        const sub = $('start-sub'); if (sub) sub.textContent = '4,700 frames drawn live on your phone · tap D for behind the scenes';
+      }
       this.loadSong(CONFIG.song.url, true);
 
       if (q.has('f')) this.seek((parseInt(q.get('f'), 10) - 1) / FPS);
@@ -108,7 +115,7 @@
         if (skip) start.remove();
         else {
           start.classList.add('show');
-          start.onclick = () => { start.remove(); this.play(); };
+          start.onclick = () => { start.remove(); if (this.touch) this.setImmersive(true); this.play(); };
           if (CONFIG.credit && CONFIG.credit.viewer) $('start-sub').textContent = `stay till the end, ${CONFIG.credit.viewer}: your name is in the credits`;
         }
       }
@@ -292,9 +299,19 @@
       if ($('btn-name')) $('btn-name').onclick = writeName;
       if (nameIn) nameIn.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); writeName(); } });
       $('btn-full').onclick = () => {
+        if (this.touch) { this.setImmersive(!document.body.classList.contains('immersive')); return; }
         const el = $('stage-wrap');
         if (document.fullscreenElement) document.exitFullscreen(); else el.requestFullscreen && el.requestFullscreen();
       };
+      // touch: tap the picture to play/pause (and to show the overlay buttons)
+      $('screen').addEventListener('click', () => {
+        if (document.body.classList.contains('immersive')) { this.pokeUI(); if (!this._uiJustShown) this.toggle(); }
+        else if (this.touch) this.toggle();
+      });
+      $('tap-exit').onclick = ev => { ev.stopPropagation(); this.setImmersive(false); };
+      $('tap-play').onclick = ev => { ev.stopPropagation(); this.toggle(); this.pokeUI(); };
+      $('tap-debug').onclick = ev => { ev.stopPropagation(); this.setDebug(!this.debug); this.pokeUI(); };
+      document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this._fsByImmersive) { this._fsByImmersive = false; this.setImmersive(false); } });
       window.addEventListener('keydown', e => {
         if (e.target.tagName === 'INPUT' && e.target.type !== 'range') return;
         if (e.code === 'Space') { e.preventDefault(); this.toggle(); }
@@ -314,6 +331,32 @@
       const times = [];
       try { for (const k of [0.5, 0.97]) { const a = performance.now(); Timeline.render(this.warmCtx, lerpT(sc, k)); times.push(Math.round(performance.now() - a)); } } catch (e) { console.error(e); }
       this.warmLog.push([sc.name.slice(0, 24), times.join('/')]);
+    },
+    setImmersive(on) {
+      document.body.classList.toggle('immersive', on);
+      if (on) {
+        // real full screen + landscape lock where the browser allows it (Android); the CSS rotation covers the rest (iPhone)
+        const el = document.documentElement;
+        if (el.requestFullscreen && !document.fullscreenElement) {
+          el.requestFullscreen({ navigationUI: 'hide' }).then(() => {
+            this._fsByImmersive = true;
+            if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {});
+          }).catch(() => {});
+        }
+        this.pokeUI();
+      } else {
+        document.body.classList.remove('ui-hidden');
+        if (document.fullscreenElement && this._fsByImmersive) { this._fsByImmersive = false; document.exitFullscreen().catch(() => {}); }
+        if (screen.orientation && screen.orientation.unlock) try { screen.orientation.unlock(); } catch (e) {}
+      }
+    },
+    // show the overlay buttons for a moment
+    pokeUI() {
+      const b = document.body;
+      this._uiJustShown = b.classList.contains('ui-hidden');
+      b.classList.remove('ui-hidden');
+      clearTimeout(this._uiTimer);
+      this._uiTimer = setTimeout(() => { if (this.playing) b.classList.add('ui-hidden'); }, 2500);
     },
     setDebug(on) {
       this.debug = on;
@@ -381,6 +424,7 @@
       if (scrub && document.activeElement !== scrub) scrub.value = frame - 1;
       const btn = $('btn-play');
       if (btn) btn.textContent = this.playing ? '❚❚' : '▶';
+      const tp = $('tap-play'); if (tp) tp.textContent = this.playing ? '❚❚' : '▶';
       if (this.refMode !== 'off' && frame !== this.lastFrame) {
         this.lastFrame = frame;
         $('ref-img').src = this.refSrc(frame);
