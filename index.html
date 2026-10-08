@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sparks of AGI — in code</title>
+<meta name="description" content="A 2.5-minute AI music video rebuilt as a live website: 4,700 frames drawn in code, no video files. Built by Shivam Deep with Claude Opus 5.5.">
+<meta name="author" content="Shivam Deep">
+<meta property="og:type" content="website">
+<meta property="og:title" content="This isn't a video. It's code.">
+<meta property="og:description" content="4,700 frames · 49 scenes · 0 video files. Press D to watch it render live. Built by Shivam Deep with Claude Opus 5.5.">
+<meta property="og:url" content="https://shivam-24-deep.github.io/sparks-of-agi-in-code/">
+<meta property="og:image" content="https://shivam-24-deep.github.io/sparks-of-agi-in-code/previews/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23090807'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23ff6a1f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-ref="off">
+  <main id="app">
+    <div id="stage-wrap">
+      <div id="stage">
+        <canvas id="screen" width="1920" height="1080"></canvas>
+        <div id="loading">loading fonts…</div>
+        <div id="err"></div>
+      </div>
+      <div id="ref">
+        <div class="ref-crop"><img id="ref-img" alt="Original video frame"></div>
+        <div class="ref-label">ORIGINAL · F <span id="ref-frame">1</span></div>
+      </div>
+    </div>
+
+    <div id="controls">
+      <button id="btn-play" title="Play / pause (Space)">▶</button>
+      <input id="scrub" type="range" min="0" max="499" step="1" value="0" aria-label="Frame">
+      <div class="readout"><span id="time">00:00.000</span><span id="frame">F 1 / 500</span></div>
+      <div id="scene-name"></div>
+      <div class="group">
+        <select id="speed" title="Speed">
+          <option value="0.1">0.1×</option>
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="1" selected>1×</option>
+        </select>
+        <select id="ref-mode" title="Compare with original (R)">
+          <option value="off">Compare: off</option>
+          <option value="side">Compare: side by side</option>
+          <option value="overlay">Compare: overlay</option>
+        </select>
+        <select id="quality" title="Render quality">
+          <option value="auto" selected>Quality: auto</option>
+          <option value="high">Quality: high</option>
+          <option value="low">Quality: light</option>
+        </select>
+        <label class="chk"><input id="loop" type="checkbox" checked> loop</label>
+        <label class="btn" title="Load the song (mp3/wav)"><span id="song-label">♪ Add song</span><input id="song-file" type="file" accept="audio/*" hidden></label>
+        <button id="btn-full" title="Fullscreen (F)">⛶</button>
+        <button id="btn-debug" title="Behind the scenes (D)">D · live</button>
+      </div>
+    </div>
+    <div id="name-form" class="name-form">
+      <label for="viewer-name">Put your name in the credits:</label>
+      <input id="viewer-name" type="text" maxlength="24" placeholder="type a name…" spellcheck="false">
+      <button id="btn-name" type="button">✎ Write it</button>
+      <span id="share-link" class="share"></span>
+    </div>
+    <p class="keys">Space play/pause · ←/→ 1 frame · Shift+←/→ 1 second · R compare · F fullscreen · D behind the scenes</p>
+    <audio id="song" preload="auto"></audio>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/scenes/part1.js"></script>
+  <script src="js/scenes/part2.js"></script>
+  <script src="js/scenes/part3.js"></script>
+  <script src="js/scenes/part4.js"></script>
+  <script src="js/scenes/part5.js"></script>
+  <script src="js/scenes/part6.js"></script>
+  <script src="js/scenes/part7.js"></script>
+  <script src="js/scenes/part8.js"></script>
+  <script src="js/scenes/part9.js"></script>
+  <script src="js/scenes/credits.js"></script>
+  <script>Engine.boot();</script>
+</body>
+</html>
