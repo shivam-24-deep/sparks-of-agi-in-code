@@ -564,7 +564,7 @@
   // "I feel my atoms / rearranging" as sparkles, then the atoms fly into a paperclip   (frames 1489–1577)
   function textDots(str, size, w, h, step) {
     const c = document.createElement('canvas'); c.width = w; c.height = h;
-    const g = c.getContext('2d'); g.font = `900 ${size}px Archivo`; g.fillStyle = '#fff'; g.textBaseline = 'middle';
+    const g = c.getContext('2d', { willReadFrequently: true }); g.font = `900 ${size}px Archivo`; g.fillStyle = '#fff'; g.textBaseline = 'middle';
     g.fillText(str, 0, h / 2);
     const d = g.getImageData(0, 0, w, h).data, out = [];
     for (let y = 0; y < h; y += step) for (let x = 0; x < w; x += step) if (d[(y * w + x) * 4 + 3] > 128) out.push([x, y - h / 2]);

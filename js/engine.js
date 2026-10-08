@@ -83,16 +83,35 @@
 
       await this.loadFonts();
       // warm up: render each scene once so one-time setup (meshes, text outlines) never stalls playback
-      $('loading').textContent = 'preparing scenes…';
-      await new Promise(r => setTimeout(r, 0));
-      for (const s of Timeline.scenes) for (const k of [0.5, 0.97]) Timeline.render(this.ctx, lerpT(s, k));
+      // Scenes do one-time setup (meshes, textures) on their first draw. Do it off-screen, in the
+      // background, so the start screen appears at once and nothing from later scenes flashes up.
       $('loading').remove();
+      this.warmCanvas = document.createElement('canvas'); this.warmCanvas.width = W; this.warmCanvas.height = H;
+      this.warmCtx = this.warmCanvas.getContext('2d');
+      this.warmed = new Set();
+      this.warmLog = [];
+      const idle = () => new Promise(r => setTimeout(r, this.playing ? 120 : 0));
+      (async () => {
+        for (const sc of Timeline.scenes) { await idle(); this.warmScene(sc); }
+        const slow = this.warmLog.filter(x => x[1].split('/').some(v => +v > 150));
+        if (slow.length) console.log('slow scene setup:', slow.map(x => x.join(':')).join(' | '));
+      })();
 
       this.bindUI();
       this.loadSong(CONFIG.song.url, true);
 
       if (q.has('f')) this.seek((parseInt(q.get('f'), 10) - 1) / FPS);
       else if (q.has('t')) this.seek(parseFloat(q.get('t')));
+      const start = $('start');
+      if (start) {
+        const skip = q.get('ui') === '0' || q.get('autoplay') === '1' || q.has('f') || q.has('t') || q.has('bench') || q.has('sweep');
+        if (skip) start.remove();
+        else {
+          start.classList.add('show');
+          start.onclick = () => { start.remove(); this.play(); };
+          if (CONFIG.credit && CONFIG.credit.viewer) $('start-sub').textContent = `stay till the end, ${CONFIG.credit.viewer}: your name is in the credits`;
+        }
+      }
       if (q.get('autoplay') === '1') this.play();
       if (q.get('sweep') === '1') await (async () => {
         // render every 5th frame of the whole film, catch errors, time the slowest frames
@@ -166,6 +185,7 @@
 
     // ---------- transport ----------
     play() {
+      const st = $('start'); if (st) st.remove();
       if (this.t >= Timeline.duration - 1 / FPS) this.seek(0);
       this.playing = true;
       this.lastNow = performance.now();
@@ -197,6 +217,11 @@
         this.dirty = true;
       }
       this.lastNow = now;
+      if (this.playing && this.warmCtx) {
+        // look ahead: make sure the scene starting in the next ~2 s is ready before we reach it
+        const next = Timeline.scenes.find(sc => !this.warmed.has(sc) && sc.start > this.t && sc.start < this.t + 2);
+        if (next) this.warmScene(next);
+      }
       if (this.dirty) {
         const r0 = performance.now();
         Timeline.render(this.ctx, this.t);
@@ -281,6 +306,14 @@
         else if (e.code === 'KeyD') { this.setDebug(!this.debug); }
       });
       this.updateSongLabel();
+    },
+    warmScene(sc) {
+      if (!this.warmCtx || this.warmed.has(sc)) return;
+      this.warmed.add(sc);
+      const t0 = performance.now();
+      const times = [];
+      try { for (const k of [0.5, 0.97]) { const a = performance.now(); Timeline.render(this.warmCtx, lerpT(sc, k)); times.push(Math.round(performance.now() - a)); } } catch (e) { console.error(e); }
+      this.warmLog.push([sc.name.slice(0, 24), times.join('/')]);
     },
     setDebug(on) {
       this.debug = on;

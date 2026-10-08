@@ -590,7 +590,7 @@
   // Outline points of a text string (centred on 0,0), for particle effects.
   function textPoints(str, fontStr, w, h, max = 1400, stretch) {
     const c = document.createElement('canvas'); c.width = w; c.height = h;
-    const g = c.getContext('2d');
+    const g = c.getContext('2d', { willReadFrequently: true });
     g.font = fontStr;
     if (stretch && 'fontStretch' in g) g.fontStretch = stretch; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fff';
     g.fillText(str, w / 2, h / 2);

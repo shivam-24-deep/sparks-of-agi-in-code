@@ -355,7 +355,7 @@
         const k = prog(t, F(4522), F(4534));
         if (!PD) {
           const c = document.createElement('canvas'); c.width = 600; c.height = 220;
-          const g = c.getContext('2d'); g.font = `italic 500 170px ${FONT.serif}`; g.fillStyle = '#fff'; g.fillText('P(doom)', 0, 160);
+          const g = c.getContext('2d', { willReadFrequently: true }); g.font = `italic 500 170px ${FONT.serif}`; g.fillStyle = '#fff'; g.fillText('P(doom)', 0, 160);
           const d = g.getImageData(0, 0, 600, 220).data; PD = [];
           for (let y = 0; y < 220; y += 4) for (let x = 0; x < 600; x += 4) if (d[(y * 600 + x) * 4 + 3] > 128) PD.push([x, y]);
         }
