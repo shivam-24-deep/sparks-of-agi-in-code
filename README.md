@@ -8,7 +8,7 @@ A 2.5-minute AI music video, rebuilt as a **live website**: every one of its 4,7
 
 ## Credit
 
-- **Original music video:** ORIGINAL_CREDIT. The visual design and the song belong to the original creator. This project is a recreation in code, and the song is not included.
+- **Original music video:** shared on X, creator unknown (if this is your work, please reach out and I will credit you). The visual design and the song belong to the original creator. This project is a recreation in code, and the song is not included.
 - **Website, idea and direction:** Shivam Deep
 - **Code:** written by Claude Opus 5.5 in Claude Code, directed and reviewed by me
 
