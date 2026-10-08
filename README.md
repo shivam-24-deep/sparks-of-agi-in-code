@@ -2,7 +2,7 @@
 
 A 2.5-minute AI music video, rebuilt as a **live website**: every one of its 4,700 frames is drawn by JavaScript in the browser. There are no video files and no images of the scenes.
 
-**▶ Live:** https://shivam-24-deep.github.io/sparks-of-agi-in-code/
+**▶ Live:** https://shivam-24-deep.github.io/sparks-of-agi-in-code/ · [behind the scenes view](https://shivam-24-deep.github.io/sparks-of-agi-in-code/?debug=1) · [put your name in the credits](https://shivam-24-deep.github.io/sparks-of-agi-in-code/?name=Rahul)
 
 ![Preview](previews/preview-full.jpg)
 
