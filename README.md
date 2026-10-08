@@ -8,7 +8,7 @@ A 2.5-minute AI music video, rebuilt as a **live website**: every one of its 4,7
 
 ## Credit
 
-- **Original music video:** shared on X, creator unknown (if this is your work, please reach out and I will credit you). The visual design and the song belong to the original creator. This project is a recreation in code, and the song is not included.
+- **Original music video:** shared on X, creator unknown (if this is your work, please reach out and I will credit you). The visual design and the song belong to the original creator. This project is a recreation in code. The song (`audio/song.mp3`) is the original soundtrack, used here only so the recreation plays in sync, and **all rights to it belong to its creator. If you own it and want it removed, open an issue and I will take it down right away.**
 - **Website, idea and direction:** Shivam Deep
 - **Code:** written by Claude Opus 5.5 in Claude Code, directed and reviewed by me
 
@@ -44,4 +44,4 @@ Numbers: about 7,500 lines of JavaScript, 49 scenes, 4,790 frames (the original'
 
 Open `index.html` in Chrome. No build step and no install.
 
-To add music you have the rights to, put it at `audio/song.mp3`, or use the **♪ Add song** button.
+The song plays from `audio/song.mp3`. You can also load a different track with the **♪ Add song** button.

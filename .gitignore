@@ -1,5 +1,4 @@
-# music is not part of the repo (copyright)
-audio/*.mp3
+# only the compressed song is published; large source files stay local
 audio/*.wav
 audio/*.m4a
 audio/*.ogg
